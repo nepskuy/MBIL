@@ -1,10 +1,13 @@
 package com.example.mbil
 
-import com.example.mbil.CartItem
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import java.text.DecimalFormat
+import java.text.NumberFormat
+import java.util.*
 
 class PaymentActivity : AppCompatActivity() {
 
@@ -24,6 +27,9 @@ class PaymentActivity : AppCompatActivity() {
         // Mendapatkan data cartItems dari Intent
         cartItems = intent.getParcelableArrayListExtra("CART_ITEMS") ?: mutableListOf()
 
+        // Debugging: Check cartItems and their prices
+        Log.d("PaymentActivity", "Received Cart Items: $cartItems")
+
         // Update total amount
         updateTotalAmount()
 
@@ -39,11 +45,23 @@ class PaymentActivity : AppCompatActivity() {
     // Fungsi untuk menghitung dan menampilkan total harga
     private fun updateTotalAmount() {
         val totalAmount = cartItems.sumOf { item ->
-            val price = item.price.replace("Rp.", "").toDoubleOrNull() ?: 0.0
+            val price = item.price.replace("Rp.", "").replace(",", "").toDoubleOrNull() ?: 0.0
+
+            Log.d("PaymentActivity", "Item Price: ${item.price}, Parsed Price: $price, Quantity: ${item.quantity}")
             price * item.quantity
         }
 
-        // Update total amount with "Rp." prefix
-        totalAmountTextView.text = "Rp. %.2f".format(totalAmount)
+
+        Log.d("PaymentActivity", "Total Amount (before formatting): $totalAmount")
+
+        // Format total amount as "Rp. 15.000" (Indonesian currency format)
+        totalAmountTextView.text = formatPrice(totalAmount)
     }
+
+    private fun formatPrice(price: Double): String {
+        // Format harga dengan pemisah ribuan dan tanpa angka desimal
+        val numberFormat: NumberFormat = DecimalFormat("#,###")
+        return "Total Amount: Rp. ${numberFormat.format(price)}"
+    }
+
 }

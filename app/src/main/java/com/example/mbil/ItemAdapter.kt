@@ -9,12 +9,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
+import java.text.NumberFormat
+import java.util.Locale
+
 class ItemAdapter(private val itemList: List<Item>) : RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
 
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nameTextView: TextView = itemView.findViewById(R.id.textViewName)
         val descriptionTextView: TextView = itemView.findViewById(R.id.textViewDescription)
-        val priceTextView: TextView = itemView.findViewById(R.id.textViewItemPrice)
+        val priceTextView: TextView = itemView.findViewById(R.id.textViewPrice)
         val imageView: ImageView = itemView.findViewById(R.id.imageViewItem)
     }
 
@@ -28,8 +31,9 @@ class ItemAdapter(private val itemList: List<Item>) : RecyclerView.Adapter<ItemA
         holder.nameTextView.text = item.name
         holder.descriptionTextView.text = item.description
 
-        // Format the price as "Rp."
-        holder.priceTextView.text = formatPrice(item.price)
+        // Format price as currency (Rp)
+        val formattedPrice = formatCurrency(item.price)
+        holder.priceTextView.text = formattedPrice
 
         // Load image using Glide
         Glide.with(holder.itemView.context)
@@ -52,9 +56,20 @@ class ItemAdapter(private val itemList: List<Item>) : RecyclerView.Adapter<ItemA
         return itemList.size
     }
 
-    // Helper function to format price as "Rp."
-    private fun formatPrice(price: String): String {
-        val priceValue = price.toDoubleOrNull() ?: 0.0
-        return "Rp. %.2f".format(priceValue)
+    // Helper function to format price as currency
+    // Helper function to format price as currency
+    private fun formatCurrency(price: String): String {
+        // Remove any non-numeric characters except the dot (for decimals)
+        val priceCleaned = price.replace("[^0-9.]".toRegex(), "").toDoubleOrNull() ?: 0.0
+
+        // Format as currency with thousands separator, without decimals
+        val formattedPrice = NumberFormat.getNumberInstance(Locale("id", "ID")).format(priceCleaned)
+
+        // Add "Rp." manually in front of the formatted price
+        return "Rp. $formattedPrice"
     }
+
 }
+
+
+

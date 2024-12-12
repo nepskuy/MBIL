@@ -8,20 +8,20 @@
     <!-- TextView untuk menampilkan total harga dalam format Rupiah -->
     <TextView
         android:id="@+id/textViewTotalAmount"
-        android:layout_width="wrap_content"
+        android:layout_width="316dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
         android:text="Total Amount: Rp. 0"
         android:textSize="18sp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="16dp" />
+        android:gravity="center"/>
 
     <!-- Tombol untuk menyelesaikan pembayaran -->
     <Button
         android:id="@+id/buttonCompletePayment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Selesaikan Pembayaran"
-        android:backgroundTint="@color/colorPrimary"
+        android:text="Finish Payment"
         android:textColor="@android:color/white"
         android:elevation="4dp" />
 

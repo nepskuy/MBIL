@@ -8,6 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import java.text.NumberFormat
+import java.util.*
 
 class DetailActivity : AppCompatActivity() {
 
@@ -59,8 +61,8 @@ class DetailActivity : AppCompatActivity() {
 
     // Helper function to format the price as "Rp."
     private fun formatPrice(price: String): String {
-        val priceValue = price.toDoubleOrNull() ?: 0.0
-        return "Rp. %.2f".format(priceValue)
+        val priceValue = price.replace("Rp.", "").replace(",", "").toDoubleOrNull() ?: 0.0
+        val numberFormat = NumberFormat.getNumberInstance(Locale("id", "ID"))
+        return "Rp. ${numberFormat.format(priceValue)}"
     }
 }
-

@@ -7,20 +7,20 @@ data class CartItem(
     val name: String,
     val price: String,
     val quantity: Int,
-    val imageUrl: String? // Add this property to store the image URL (optional)
+    val imageUrl: String? // Menyimpan URL gambar (opsional)
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readString() ?: "",
+        parcel.readString() ?: "", // Nilai default jika null
         parcel.readString() ?: "",
         parcel.readInt(),
-        parcel.readString() // Read the imageUrl from Parcel
+        parcel.readString() ?: "" // Pastikan imageUrl tidak null
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(name)
         parcel.writeString(price)
         parcel.writeInt(quantity)
-        parcel.writeString(imageUrl) // Write the imageUrl to Parcel
+        parcel.writeString(imageUrl) // Menyimpan imageUrl ke Parcel
     }
 
     override fun describeContents(): Int = 0
@@ -35,3 +35,4 @@ data class CartItem(
         }
     }
 }
+

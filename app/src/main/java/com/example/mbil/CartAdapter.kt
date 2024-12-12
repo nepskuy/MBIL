@@ -1,5 +1,6 @@
 package com.example.mbil
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,13 +42,16 @@ class CartAdapter(
         // If imageUrl is provided, load the image using Glide
         if (!cartItem.imageUrl.isNullOrEmpty()) {
             Glide.with(holder.itemView.context)
-                .load(cartItem.imageUrl)  // Load image from the provided URL
-                .placeholder(R.drawable.ic_launcher_background) // Set a placeholder image while loading
-                .into(holder.itemImageView) // Set the loaded image into ImageView
+                .load(cartItem.imageUrl)
+                .placeholder(R.drawable.default_image)
+                .error(R.drawable.default_image) // Menangani error jika gambar gagal dimuat
+                .into(holder.itemImageView)
         } else {
-            // If imageUrl is null or empty, set a default image
-            holder.itemImageView.setImageResource(R.drawable.ic_launcher_background)
+            holder.itemImageView.setImageResource(R.drawable.default_image)
         }
+
+        Log.d("CartAdapter", "Image URL: ${cartItem.imageUrl}") // Untuk log URL
+
 
         // Handle the remove button click to remove item from the cart
         holder.removeButton.setOnClickListener {

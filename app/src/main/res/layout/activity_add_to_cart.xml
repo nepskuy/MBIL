@@ -20,22 +20,24 @@
         android:layout_marginTop="16dp">
 
         <!-- TextView to display the total price -->
-        <TextView
-            android:id="@+id/textViewTotal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Total: Rp0"
-            android:textSize="18sp"
-            android:layout_gravity="end"
-            android:layout_marginBottom="8dp" />
 
         <!-- Button for checkout -->
+
+        <TextView
+            android:id="@+id/textViewTotal"
+            android:layout_width="172dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginBottom="8dp"
+            android:text="Total: "
+            android:textSize="18sp" />
+
         <Button
             android:id="@+id/buttonCheckout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Proceed to Checkout"
-            android:backgroundTint="@color/colorPrimary"
+
             android:textColor="@android:color/white"
             android:elevation="4dp" />
 

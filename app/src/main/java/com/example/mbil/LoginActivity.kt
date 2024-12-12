@@ -15,7 +15,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
 class LoginActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityLoginBinding
+    private lateinit var binding: ActivityLoginBinding //inisialisasi
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var database: DatabaseReference
 
@@ -27,13 +27,13 @@ class LoginActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().reference.child("users")
 
-        binding.loginButton.setOnClickListener {
+        binding.loginButton.setOnClickListener { //tombol login
             val email = binding.loginEmail.text.toString()
             val password = binding.loginPassword.text.toString()
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
                     if (it.isSuccessful) {
-                        // After login success, check user access level
+                        //login sukses -> cek akses level (grant)
                         val userId = firebaseAuth.currentUser?.uid
                         if (userId != null) {
                             checkUserAccessLevel(userId)
@@ -47,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        binding.forgotPassword.setOnClickListener {
+        binding.forgotPassword.setOnClickListener { //tombol lupa password
             val builder = AlertDialog.Builder(this)
             val view = layoutInflater.inflate(R.layout.dialog_forgot, null)
             val userEmail = view.findViewById<EditText>(R.id.editBox)
@@ -66,13 +66,13 @@ class LoginActivity : AppCompatActivity() {
             dialog.show()
         }
 
-        binding.signupRedirectText.setOnClickListener {
+        binding.signupRedirectText.setOnClickListener { //tombol register
             val signupIntent = Intent(this, SignupActivity::class.java)
             startActivity(signupIntent)
         }
     }
 
-    // Function to compare and reset password if necessary
+    // fungsi membandingkan dan reset pass kalo mau
     private fun compareEmail(email: EditText) {
         if (email.text.toString().isEmpty()) {
             return
@@ -88,14 +88,13 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
-    // Check the user's access level from Firebase Realtime Database
-    // LoginActivity.kt
+    // akses level user
     private fun checkUserAccessLevel(userId: String) {
         database.child(userId).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val user = task.result?.getValue(User::class.java)
                 if (user != null) {
-                    // Navigate based on access level
+
                     if (user.accessLevel == 1) {
                         val intent = Intent(this, MainActivity::class.java)
                         startActivity(intent)

@@ -3,12 +3,15 @@ package com.example.mbil
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import java.text.DecimalFormat
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.text.NumberFormat
+import java.util.Locale
 
 class AddToCartActivity : AppCompatActivity() {
 
@@ -83,9 +86,37 @@ class AddToCartActivity : AppCompatActivity() {
 
     private fun updateTotal() {
         val total = cartItems.sumOf { item ->
-            val price = item.price.replace("Rp", "").replace(",", "").toDoubleOrNull() ?: 0.0
+            // Remove "Rp." and commas, then trim spaces to ensure proper parsing
+            val price =
+                item.price.replace("Rp.", "").replace(",", "").trim().toDoubleOrNull() ?: 0.0
+
+            // Debugging: Log each price and its quantity to check the values
+            Log.d(
+                "AddToCartActivity",
+                "Item price: ${item.price}, parsed price: $price, quantity: ${item.quantity}"
+            )
+
             price * item.quantity
         }
-        totalTextView.text = "Total: Rp %.2f".format(total)
+
+        val formattedTotal = formatCurrency(total)
+
+        // Debugging: Log the total amount before displaying
+        Log.d("AddToCartActivity", "Total amount: $formattedTotal")
+
+        totalTextView.text = "Total: $formattedTotal"
     }
+
+
+    private fun formatCurrency(amount: Double): String {
+        // Create a DecimalFormat instance with the desired pattern
+        val decimalFormat = DecimalFormat("#,###") // This will work for values like 15,000 and 15
+
+        // Format the amount and return it as a currency string
+        val formattedAmount = decimalFormat.format(amount)
+
+        // Return the formatted amount prefixed with "Rp."
+        return "Rp. $formattedAmount"
+    }
+
 }
