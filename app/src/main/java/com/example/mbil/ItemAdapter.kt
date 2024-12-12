@@ -14,7 +14,7 @@ class ItemAdapter(private val itemList: List<Item>) : RecyclerView.Adapter<ItemA
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nameTextView: TextView = itemView.findViewById(R.id.textViewName)
         val descriptionTextView: TextView = itemView.findViewById(R.id.textViewDescription)
-        val priceTextView: TextView = itemView.findViewById(R.id.textViewPrice)
+        val priceTextView: TextView = itemView.findViewById(R.id.textViewItemPrice)
         val imageView: ImageView = itemView.findViewById(R.id.imageViewItem)
     }
 
@@ -27,7 +27,9 @@ class ItemAdapter(private val itemList: List<Item>) : RecyclerView.Adapter<ItemA
         val item = itemList[position]
         holder.nameTextView.text = item.name
         holder.descriptionTextView.text = item.description
-        holder.priceTextView.text = item.price
+
+        // Format the price as "Rp."
+        holder.priceTextView.text = formatPrice(item.price)
 
         // Load image using Glide
         Glide.with(holder.itemView.context)
@@ -48,5 +50,11 @@ class ItemAdapter(private val itemList: List<Item>) : RecyclerView.Adapter<ItemA
 
     override fun getItemCount(): Int {
         return itemList.size
+    }
+
+    // Helper function to format price as "Rp."
+    private fun formatPrice(price: String): String {
+        val priceValue = price.toDoubleOrNull() ?: 0.0
+        return "Rp. %.2f".format(priceValue)
     }
 }

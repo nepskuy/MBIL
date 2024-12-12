@@ -20,6 +20,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MBIL"
         tools:targetApi="31">
+
+        <activity android:name=".AddToCartActivity"/>
+        <activity android:name=".CheckoutActivity"/>
+        <activity android:name=".PaymentActivity"/>
+
         <activity
             android:name=".DetailActivity"
             android:exported="false" />
@@ -52,6 +57,8 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+
+
     </application>
 
 </manifest>
