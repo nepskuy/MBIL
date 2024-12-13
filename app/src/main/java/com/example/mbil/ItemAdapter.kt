@@ -9,6 +9,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
+import java.text.NumberFormat
+import java.util.Locale
+
 class ItemAdapter(private val itemList: List<Item>) : RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
 
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -27,7 +30,10 @@ class ItemAdapter(private val itemList: List<Item>) : RecyclerView.Adapter<ItemA
         val item = itemList[position]
         holder.nameTextView.text = item.name
         holder.descriptionTextView.text = item.description
-        holder.priceTextView.text = item.price
+
+        // Format price as currency (Rp)
+        val formattedPrice = formatCurrency(item.price)
+        holder.priceTextView.text = formattedPrice
 
         // Load image using Glide
         Glide.with(holder.itemView.context)
@@ -49,4 +55,21 @@ class ItemAdapter(private val itemList: List<Item>) : RecyclerView.Adapter<ItemA
     override fun getItemCount(): Int {
         return itemList.size
     }
+
+    // Helper function to format price as currency
+    // Helper function to format price as currency
+    private fun formatCurrency(price: String): String {
+        // Remove any non-numeric characters except the dot (for decimals)
+        val priceCleaned = price.replace("[^0-9.]".toRegex(), "").toDoubleOrNull() ?: 0.0
+
+        // Format as currency with thousands separator, without decimals
+        val formattedPrice = NumberFormat.getNumberInstance(Locale("id", "ID")).format(priceCleaned)
+
+        // Add "Rp." manually in front of the formatted price
+        return "Rp. $formattedPrice"
+    }
+
 }
+
+
+

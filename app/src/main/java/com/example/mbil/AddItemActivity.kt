@@ -21,7 +21,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AddItemActivity : AppCompatActivity() {
+class AddItemActivity : AppCompatActivity() { //logika halaman admin
 
     private lateinit var database: DatabaseReference
     private lateinit var storage: FirebaseStorage

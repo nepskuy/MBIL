@@ -6,40 +6,56 @@
     android:layout_height="wrap_content"
     android:padding="16dp">
 
+    <!-- Image for the item -->
     <ImageView
         android:id="@+id/imageViewItem"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:src="@drawable/default_image"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- Item name text -->
     <TextView
         android:id="@+id/textViewName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Item Name"
         android:textColor="#000000"
+        android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/imageViewItem"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:ellipsize="end"
+        android:maxLines="1"/>
 
+
+    <!-- Item description text -->
     <TextView
         android:id="@+id/textViewDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Description"
         android:textColor="#000000"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/imageViewItem"
-        app:layout_constraintTop_toBottomOf="@id/textViewName" />
+        app:layout_constraintTop_toBottomOf="@id/textViewName"
+        android:ellipsize="end"
+        android:maxLines="2"/>
 
+    <!-- Item price text -->
     <TextView
         android:id="@+id/textViewPrice"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Price"
+        android:text="Rp. 0"
         android:textColor="#000000"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/imageViewItem"
-        app:layout_constraintTop_toBottomOf="@id/textViewDescription" />
+        app:layout_constraintTop_toBottomOf="@id/textViewDescription"
+        android:ellipsize="end"
+        android:maxLines="1" />
 </androidx.constraintlayout.widget.ConstraintLayout>

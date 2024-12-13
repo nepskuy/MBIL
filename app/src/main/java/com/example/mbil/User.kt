@@ -1,6 +1,6 @@
 package com.example.mbil
 
 data class User(
-    val email: String = "",   // Default value for email
-    val accessLevel: Int = 1// Default access level is 1
+    val email: String = "",   // default tipe data email (string)
+    val accessLevel: Int = 1// default akses level
 )

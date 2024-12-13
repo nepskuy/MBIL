@@ -19,7 +19,7 @@ class SignupActivity : AppCompatActivity() {
         binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize FirebaseAuth and FirebaseDatabase
+        // Insialisasi FirebaseAuth and FirebaseDatabase
         firebaseAuth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().reference.child("users")
 
@@ -31,19 +31,19 @@ class SignupActivity : AppCompatActivity() {
 
             if (email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()) {
                 if (password == confirmPassword) {
-                    // Create user with Firebase Authentication
+                    // create akun user pake firebase aunthetication
                     firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
                         if (it.isSuccessful) {
-                            // Successfully created the user, now save to Realtime Database
-                            val userId = firebaseAuth.currentUser?.uid
+
+                            val userId = firebaseAuth.currentUser?.uid // Simpan ke realtime database (user)
                             if (userId != null) {
-                                val user = User(email, 1) // Default access level = 1
+                                val user = User(email, 1) // Default akses user level = 1
                                 database.child(userId).setValue(user).addOnCompleteListener { task ->
                                     if (task.isSuccessful) {
-                                        // Navigate to Login Activity after successful registration
-                                        val intent = Intent(this, LoginActivity::class.java)
+
+                                        val intent = Intent(this, LoginActivity::class.java) // navigasi untuk login
                                         startActivity(intent)
-                                        finish()  // Close the SignupActivity
+                                        finish()
                                     } else {
                                         Toast.makeText(this, "Failed to save user data", Toast.LENGTH_SHORT).show()
                                     }
@@ -61,7 +61,7 @@ class SignupActivity : AppCompatActivity() {
             }
         }
 
-        // Redirect to login activity
+        // balik ke login activity
         binding.loginRedirectText.setOnClickListener {
             val loginIntent = Intent(this, LoginActivity::class.java)
             startActivity(loginIntent)
