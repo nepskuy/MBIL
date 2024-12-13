@@ -3,26 +3,124 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="#345597">
 
-    <!-- TextView untuk menampilkan total harga dalam format Rupiah -->
+    <!-- TextView untuk menampilkan total harga -->
     <TextView
         android:id="@+id/textViewTotalAmount"
-        android:layout_width="316dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="24dp"
         android:text="Total Amount: Rp. 0"
         android:textSize="18sp"
-        android:gravity="center"/>
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:gravity="center" />
+
+    <!-- TextView untuk label opsi pengiriman -->
+    <TextView
+        android:id="@+id/textViewShippingOption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Pilih Opsi Pengiriman:"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white" />
+
+    <!-- RadioGroup untuk opsi pengiriman -->
+    <RadioGroup
+        android:id="@+id/radioGroupShippingOptions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp">
+
+        <RadioButton
+            android:id="@+id/radioButtonRegular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reguler"
+            android:buttonTint="@drawable/radio_button"
+            android:textColor="@android:color/white" />
+
+        <RadioButton
+            android:id="@+id/radioButtonExpress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ekspres"
+            android:buttonTint="@drawable/radio_button"
+            android:textColor="@android:color/white" />
+
+        <RadioButton
+            android:id="@+id/radioButtonCOD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="COD (Cash on Delivery)"
+            android:buttonTint="@drawable/radio_button"
+            android:textColor="@android:color/white" />
+    </RadioGroup>
+
+    <!-- TextView untuk label metode pembayaran -->
+    <TextView
+        android:id="@+id/textViewPaymentMethod"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Pilih Metode Pembayaran:"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white" />
+
+    <!-- RadioGroup untuk metode pembayaran -->
+    <RadioGroup
+        android:id="@+id/radioGroupPaymentMethods"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp">
+
+        <RadioButton
+            android:id="@+id/radioButtonCash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cash"
+            android:buttonTint="@drawable/radio_button"
+            android:textColor="@android:color/white" />
+
+        <RadioButton
+            android:id="@+id/radioButtonBankATM"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bank (ATM)"
+            android:buttonTint="@drawable/radio_button"
+            android:textColor="@android:color/white" />
+
+        <RadioButton
+            android:id="@+id/radioButtonBankVirtual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bank (Virtual)"
+            android:buttonTint="@drawable/radio_button"
+            android:textColor="@android:color/white" />
+    </RadioGroup>
+
+    <!-- Spacer -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <!-- Tombol untuk menyelesaikan pembayaran -->
     <Button
         android:id="@+id/buttonCompletePayment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="Finish Payment"
         android:textColor="@android:color/white"
+        android:backgroundTint="#FF6750A4"
         android:elevation="4dp" />
 
 </LinearLayout>

@@ -41,13 +41,16 @@ class CartAdapter(
 
         // If imageUrl is provided, load the image using Glide
         if (!cartItem.imageUrl.isNullOrEmpty()) {
+            Log.d("CartAdapter", "Loading image URL: ${cartItem.imageUrl}")
             Glide.with(holder.itemView.context)
                 .load(cartItem.imageUrl)
                 .placeholder(R.drawable.default_image)
-                .error(R.drawable.default_image) // Menangani error jika gambar gagal dimuat
+                .error(R.drawable.default_image)
                 .into(holder.itemImageView)
         } else {
+            Log.d("CartAdapter", "Image URL is null or empty")
             holder.itemImageView.setImageResource(R.drawable.default_image)
+
         }
 
         Log.d("CartAdapter", "Image URL: ${cartItem.imageUrl}") // Untuk log URL
