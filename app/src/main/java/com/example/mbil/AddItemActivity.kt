@@ -21,12 +21,13 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AddItemActivity : AppCompatActivity() { //logika halaman admin
+class AddItemActivity : AppCompatActivity() {
 
     private lateinit var database: DatabaseReference
     private lateinit var storage: FirebaseStorage
     private lateinit var imageUri: Uri
     private lateinit var imageView: ImageView
+    private lateinit var ratingBarItem: RatingBar
 
     private lateinit var cameraLauncher: ActivityResultLauncher<Intent>
     private lateinit var galleryLauncher: ActivityResultLauncher<Intent>
@@ -43,6 +44,7 @@ class AddItemActivity : AppCompatActivity() { //logika halaman admin
         storage = FirebaseStorage.getInstance()
 
         imageView = findViewById(R.id.imageViewItem)
+
         val buttonSelectImage = findViewById<Button>(R.id.buttonSelectImage)
         val buttonAddItem = findViewById<Button>(R.id.buttonAddItem)
 
@@ -149,8 +151,11 @@ class AddItemActivity : AppCompatActivity() { //logika halaman admin
             return
         }
 
+        // Ambil rating dari RatingBar
+        val rating = ratingBarItem.rating
+
         uploadImageToStorage { imageUrl ->
-            val itemData = Item(id, name, description, price, imageUrl)
+            val itemData = Item(id, name, description, price, imageUrl, rating)
             database.child(id).setValue(itemData).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(this, "Item added successfully!", Toast.LENGTH_SHORT).show()
@@ -168,5 +173,6 @@ class AddItemActivity : AppCompatActivity() { //logika halaman admin
         findViewById<EditText>(R.id.editTextItemDescription).text.clear()
         findViewById<EditText>(R.id.editTextItemPrice).text.clear()
         imageView.setImageResource(0)
+        ratingBarItem.rating = 0f // Reset RatingBar setelah item ditambahkan
     }
 }

@@ -1,9 +1,7 @@
 package com.example.mbil
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -13,7 +11,6 @@ import java.util.*
 
 class DetailActivity : AppCompatActivity() {
 
-    private lateinit var addToCartButton: Button
     private lateinit var itemNameTextView: TextView
     private lateinit var itemPriceTextView: TextView
     private lateinit var itemDescriptionTextView: TextView
@@ -24,7 +21,6 @@ class DetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_detail)
 
         // Inisialisasi elemen UI
-        addToCartButton = findViewById(R.id.buttonAddToCart)
         itemNameTextView = findViewById(R.id.textViewItemName)
         itemPriceTextView = findViewById(R.id.textViewItemPrice)
         itemDescriptionTextView = findViewById(R.id.textViewDetailDescription)
@@ -46,17 +42,6 @@ class DetailActivity : AppCompatActivity() {
 
         // Menampilkan gambar menggunakan Glide
         Glide.with(this).load(itemImageUrl).into(itemImageView)
-
-        // Handle tombol "Add to Cart" click
-        addToCartButton.setOnClickListener {
-            Log.d("DetailActivity", "Add to Cart button clicked!")
-            val intent = Intent(this, AddToCartActivity::class.java)
-            intent.putExtra("ITEM_NAME", itemName)
-            intent.putExtra("ITEM_PRICE", formattedPrice)  // Send the formatted price
-            intent.putExtra("ITEM_DESCRIPTION", itemDescription)
-            intent.putExtra("ITEM_IMAGE_URL", itemImageUrl)
-            startActivity(intent)
-        }
     }
 
     // Helper function to format the price as "Rp."

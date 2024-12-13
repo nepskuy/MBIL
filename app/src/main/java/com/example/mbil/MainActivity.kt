@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
 class MainActivity : AppCompatActivity() {
@@ -47,5 +48,21 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this@MainActivity, "Gagal mengambil data", Toast.LENGTH_SHORT).show()
             }
         })
+
+        // Menambahkan logika untuk membuka About Us Activity
+        val aboutUsButton = findViewById<Button>(R.id.aboutUsButton)
+        aboutUsButton.setOnClickListener {
+            val intent = Intent(this, AboutUsActivity::class.java)
+            startActivity(intent)
+        }
+
+        // Menambahkan logika untuk logout
+        val logoutButton = findViewById<Button>(R.id.logoutButton)
+        logoutButton.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()  // Logout from Firebase
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()  // Close MainActivity after logout
+        }
     }
 }
