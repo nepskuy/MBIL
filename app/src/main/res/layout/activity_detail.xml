@@ -84,5 +84,15 @@
             android:textStyle="bold"
             android:gravity="center" />
 
+        <Button
+            android:id="@+id/buttonAddToCart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#345597"
+            android:text="Add to Cart"
+            android:textColor="#FFFFFF" />
+
+
     </LinearLayout>
 </ScrollView>

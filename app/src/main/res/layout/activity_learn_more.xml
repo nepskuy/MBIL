@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F3F6FB"
+    tools:context=".LearnMoreActivity">
+
+    <!-- Banner Image -->
+    <ImageView
+        android:id="@+id/bannerImage"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_logistic_banner"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/learnMoreTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mitra Buana International Logistic"
+        android:textColor="#345597"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/bannerImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Scrollable Content -->
+    <ScrollView
+        android:id="@+id/learnMoreScroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/learnMoreTitle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/learnMoreText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="8dp"
+                android:text="Welcome to Mitra Buana International Logistic!\n\nMitra Buana International Logistic adalah solusi logistik terpercaya yang menghadirkan layanan pengiriman barang internasional dengan standar tertinggi. Kami didirikan dengan misi untuk menghubungkan pasar global dengan cara yang aman, cepat, dan efisien, memastikan setiap pelanggan kami mendapatkan pengalaman logistik yang mulus.\n\nKami bekerja dengan mitra-mitra terbaik di seluruh dunia untuk memastikan barang yang Anda kirimkan atau terima selalu dalam kondisi aman. Semua barang yang kami tangani melalui proses inspeksi ketat dan memenuhi regulasi internasional, sehingga Anda dapat merasa tenang mengetahui bahwa pengiriman Anda berada di tangan yang tepat.\n\nMengapa Memilih Kami?\n\nKeamanan Barang: Barang-barang Anda adalah prioritas kami. Kami menggunakan teknologi terkini dan bekerja dengan profesional berpengalaman untuk menjaga keamanan setiap pengiriman.\nKemitraan Global: Kami memiliki jaringan luas dengan mitra terpercaya di berbagai negara, memungkinkan kami menangani berbagai jenis pengiriman.\nLayanan Terintegrasi: Mulai dari pengemasan hingga pengiriman akhir, kami menyediakan layanan yang menyeluruh dan mudah diakses melalui aplikasi kami.\n\nKami berkomitmen untuk memberikan pengalaman logistik terbaik bagi pelanggan kami, memastikan setiap pengiriman berjalan lancar, tepat waktu, dan sesuai harapan.\n\nMitra Buana International Logistic – Menghubungkan Dunia, Mengantarkan Kepercayaan."
+                android:textColor="#6A6A6A"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

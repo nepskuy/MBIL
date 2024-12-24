@@ -19,6 +19,7 @@
         app:layout_constraintVertical_bias="0.536" />
 
 
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="0dp"
@@ -119,7 +120,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="+085157170559"
+        android:text="+61 123 456 789"
         android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

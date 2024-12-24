@@ -35,6 +35,9 @@
 
         <activity android:name=".DetailActivity"/>
         <activity android:name=".AboutUsActivity" />
+        <activity android:name=".LearnMoreActivity" />
+        <activity android:name=".CartActivity" />
+
 
 
         <activity
