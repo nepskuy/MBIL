@@ -1,6 +1,5 @@
 package com.example.mbil
 
-import ItemCart
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
@@ -23,10 +22,10 @@ class CartDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
     override fun onCreate(db: SQLiteDatabase) {
         val createTableQuery = """
             CREATE TABLE $TABLE_NAME (
-                $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                $COLUMN_NAME TEXT NOT NULL,
-                $COLUMN_PRICE REAL NOT NULL,
-                $COLUMN_QUANTITY INTEGER NOT NULL,
+                $COLUMN_ID TEXT PRIMARY KEY,  -- Changed to TEXT for String ID
+                $COLUMN_NAME TEXT,
+                $COLUMN_PRICE REAL, 
+                $COLUMN_QUANTITY INTEGER, 
                 $COLUMN_IMAGE_URL TEXT
             )
         """
@@ -38,36 +37,30 @@ class CartDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
         onCreate(db)
     }
 
-    // Fungsi untuk menambahkan item ke keranjang
-    fun addItemToCart(name: String, price: Double, quantity: Int, imageUrl: String) {
+    // Function to add item to the cart or update quantity if item already exists
+    fun addItemToCart(name: String, price: String, quantity: String, imageUrl: String): Long {
         val db = writableDatabase
-        val cursor = db.query(
-            TABLE_NAME,
-            null,
-            "$COLUMN_NAME = ? AND $COLUMN_PRICE = ? AND $COLUMN_IMAGE_URL = ?",
-            arrayOf(name, price.toString(), imageUrl),
-            null,
-            null,
-            null
-        )
 
-        if (cursor.moveToFirst()) {
-            // Jika item sudah ada, perbarui kuantitas
+        // Check if the item already exists in the cart
+        val cursor = db.query(TABLE_NAME, null, "$COLUMN_NAME = ?", arrayOf(name), null, null, null)
+
+        return if (cursor.moveToFirst()) {
+            // If the item exists, update its quantity
+            val existingId = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ID))
             val existingQuantity = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_QUANTITY))
-            val newQuantity = existingQuantity + quantity
+
+            val updatedQuantity = existingQuantity + quantity.toInt()
 
             val values = ContentValues().apply {
-                put(COLUMN_QUANTITY, newQuantity)
+                put(COLUMN_QUANTITY, updatedQuantity)
             }
 
-            db.update(
-                TABLE_NAME,
-                values,
-                "$COLUMN_NAME = ? AND $COLUMN_PRICE = ? AND $COLUMN_IMAGE_URL = ?",
-                arrayOf(name, price.toString(), imageUrl)
-            )
+            db.update(TABLE_NAME, values, "$COLUMN_ID = ?", arrayOf(existingId))
+            cursor.close()
+
+            0 // No new row inserted
         } else {
-            // Jika item belum ada, tambahkan sebagai item baru
+            // If the item doesn't exist, insert it into the cart
             val values = ContentValues().apply {
                 put(COLUMN_NAME, name)
                 put(COLUMN_PRICE, price)
@@ -76,54 +69,47 @@ class CartDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
             }
             db.insert(TABLE_NAME, null, values)
         }
-
-        cursor.close()
-        db.close() // Tutup database
     }
 
-    // Fungsi untuk mengambil semua item dari keranjang
+    // Function to get all cart items
     fun getCartItems(): List<ItemCart> {
         val db = readableDatabase
         val cursor = db.query(TABLE_NAME, null, null, null, null, null, null)
         val items = mutableListOf<ItemCart>()
 
-        cursor.use {
-            while (it.moveToNext()) {
-                val id = it.getString(it.getColumnIndexOrThrow(COLUMN_ID))
-                val name = it.getString(it.getColumnIndexOrThrow(COLUMN_NAME))
-                val price = it.getDouble(it.getColumnIndexOrThrow(COLUMN_PRICE))
-                val quantity = it.getInt(it.getColumnIndexOrThrow(COLUMN_QUANTITY))
-                val imageUrl = it.getString(it.getColumnIndexOrThrow(COLUMN_IMAGE_URL))
+        if (cursor.moveToFirst()) {
+            do {
+                val id = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ID)) // ID as String
+                val name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME))
+                val price = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PRICE))
+                val imageUrl = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE_URL))
+                val quantity = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_QUANTITY))
 
                 items.add(ItemCart(id, name, price, imageUrl, quantity))
-            }
+            } while (cursor.moveToNext())
         }
-        db.close() // Tutup database
+        cursor.close()
         return items
     }
 
-    // Fungsi untuk memperbarui jumlah item dalam keranjang
-    fun updateQuantity(itemId: String, newQuantity: Int): Boolean {
-        val db = writableDatabase
-        val values = ContentValues().apply {
-            put(COLUMN_QUANTITY, newQuantity)
-        }
-        val rowsAffected = db.update(TABLE_NAME, values, "$COLUMN_ID = ?", arrayOf(itemId))
-        db.close() // Tutup database
-        return rowsAffected > 0
-    }
-
-    // Fungsi untuk menghapus item dari keranjang
+    // Function to delete item from the cart
     fun deleteItemFromCart(itemId: String) {
         val db = writableDatabase
         db.delete(TABLE_NAME, "$COLUMN_ID = ?", arrayOf(itemId))
-        db.close() // Tutup database
     }
 
-    // Fungsi untuk menghapus semua item dari keranjang
+    // Function to clear the entire cart
     fun clearCart() {
         val db = writableDatabase
-        db.delete(TABLE_NAME, null, null)
-        db.close() // Tutup database
+        db.delete(TABLE_NAME, null, null) // Delete all rows in the cart table
+    }
+
+    // Function to update item quantity in the cart
+    fun updateCartItem(cartItem: ItemCart) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(COLUMN_QUANTITY, cartItem.quantity)  // Update the quantity column
+        }
+        db.update(TABLE_NAME, values, "$COLUMN_ID = ?", arrayOf(cartItem.id)) // Use String ID
     }
 }

@@ -3,21 +3,17 @@ package com.example.mbil
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import java.text.NumberFormat
+import android.widget.Button
+import android.widget.EditText
+import android.widget.AdapterView
 import java.util.Locale
 
 class PaymentActivity : AppCompatActivity() {
-
-    private val bankVaPrefixes = mapOf(
-        "Bank BCA" to "014",
-        "Bank Mandiri" to "008",
-        "Bank BRI" to "002",
-        "Bank BNI" to "009",
-        "Bank CIMB Niaga" to "022",
-        "Bank Permata" to "013"
-    )
 
     private lateinit var cartDatabaseHelper: CartDatabaseHelper
 
@@ -25,137 +21,128 @@ class PaymentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_payment)
 
+        // Initialize the database helper
         cartDatabaseHelper = CartDatabaseHelper(this)
 
-        val totalPrice = intent.getDoubleExtra("TOTAL_PRICE", 0.0)
-        val textViewTotalPrice: TextView = findViewById(R.id.textViewTotalPrice)
-        textViewTotalPrice.text = formatPrice(totalPrice)
+        // Retrieve total price passed from CartActivity
+        val totalPrice = intent.getDoubleExtra("TOTAL_PRICE", 0.0)  // Get the total price passed as an extra
 
+        // Show the total price in a TextView
+        val totalPriceTextView: TextView = findViewById(R.id.textViewTotalPrice)
+        totalPriceTextView.text = "Total: ${formatPrice(totalPrice)}"  // Display the formatted total price
+
+        // Spinner for selecting payment method
         val paymentMethods = arrayOf("Tunai", "Kartu Kredit/Debit", "Transfer Bank", "BCA OneKlik", "BRI Direct Debit")
-        val bankOptions = bankVaPrefixes.keys.toTypedArray()
+        val bankOptions = arrayOf("Bank BCA", "SeaBank", "Bank Mandiri", "Bank BNI", "Bank BRI", "Bank Syariah Indonesia", "Bank Permata")
 
         val spinnerPaymentMethod: Spinner = findViewById(R.id.spinnerPaymentMethod)
         val spinnerBankOptions: Spinner = findViewById(R.id.spinnerBankOptions)
-        val textViewVirtualAccount: TextView = findViewById(R.id.textViewVirtualAccount)
-        val editTextCardNumber: EditText = findViewById(R.id.editTextCardNumber)
-        val editTextExpiryDate: EditText = findViewById(R.id.editTextExpiryDate)
-        val editTextPhoneNumber: EditText = findViewById(R.id.editTextPhoneNumber)
-        val buttonAddCard: Button = findViewById(R.id.buttonAddCard)
-        val buttonConfirmPayment: Button = findViewById(R.id.buttonConfirmPayment)
 
+        // Set adapter for payment method spinner
         val paymentAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, paymentMethods)
         paymentAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerPaymentMethod.adapter = paymentAdapter
 
+        // Set adapter for bank options spinner
         val bankAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, bankOptions)
         bankAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerBankOptions.adapter = bankAdapter
 
-        spinnerBankOptions.visibility = View.GONE
-        textViewVirtualAccount.visibility = View.GONE
-        editTextCardNumber.visibility = View.GONE
-        editTextExpiryDate.visibility = View.GONE
-        editTextPhoneNumber.visibility = View.GONE
-        buttonAddCard.visibility = View.GONE
-
+        // Handle payment method selection dynamically using OnItemSelectedListener
         spinnerPaymentMethod.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selectedPaymentMethod = paymentMethods[position]
+            override fun onItemSelected(parentView: AdapterView<*>, selectedView: View?, position: Int, id: Long) {
+                val selectedPaymentMethod = spinnerPaymentMethod.selectedItem.toString()
 
+                // Hide all fields initially
+                hideAllFields()
+
+                // Show fields based on selected payment method
                 when (selectedPaymentMethod) {
                     "Transfer Bank" -> {
-                        spinnerBankOptions.visibility = View.VISIBLE
-                        editTextCardNumber.visibility = View.GONE
-                        editTextExpiryDate.visibility = View.GONE
-                        editTextPhoneNumber.visibility = View.GONE
-                        buttonAddCard.visibility = View.GONE
+                        findViewById<View>(R.id.textViewBankOptionsLabel).visibility = View.VISIBLE
+                        findViewById<View>(R.id.spinnerBankOptions).visibility = View.VISIBLE
+                        findViewById<View>(R.id.textViewVirtualAccount).visibility = View.VISIBLE
                     }
                     "Kartu Kredit/Debit" -> {
-                        editTextCardNumber.visibility = View.VISIBLE
-                        editTextExpiryDate.visibility = View.VISIBLE
-                        editTextPhoneNumber.visibility = View.VISIBLE
-                        buttonAddCard.visibility = View.GONE
-                        spinnerBankOptions.visibility = View.GONE
-                        textViewVirtualAccount.visibility = View.GONE
+                        findViewById<View>(R.id.editTextCardNumber).visibility = View.VISIBLE
+                        findViewById<View>(R.id.editTextExpiryDate).visibility = View.VISIBLE
+                        findViewById<View>(R.id.editTextCVV).visibility = View.VISIBLE
+                        findViewById<View>(R.id.editTextPhoneNumber).visibility = View.VISIBLE
+                        findViewById<View>(R.id.buttonAddCard).visibility = View.VISIBLE
                     }
                     "BCA OneKlik", "BRI Direct Debit" -> {
-                        editTextCardNumber.visibility = View.VISIBLE
-                        editTextExpiryDate.visibility = View.VISIBLE
-                        editTextPhoneNumber.visibility = View.VISIBLE
-                        buttonAddCard.visibility = View.VISIBLE
-                        spinnerBankOptions.visibility = View.GONE
-                        textViewVirtualAccount.visibility = View.GONE
+                        findViewById<View>(R.id.editTextCardNumber).visibility = View.VISIBLE
+                        findViewById<View>(R.id.editTextCardLimit).visibility = View.VISIBLE
+                        findViewById<View>(R.id.editTextActivationMethod).visibility = View.VISIBLE
                     }
                     else -> {
-                        spinnerBankOptions.visibility = View.GONE
-                        textViewVirtualAccount.visibility = View.GONE
-                        editTextCardNumber.visibility = View.GONE
-                        editTextExpiryDate.visibility = View.GONE
-                        editTextPhoneNumber.visibility = View.GONE
-                        buttonAddCard.visibility = View.GONE
+                        // All other cases, ensure fields are hidden
                     }
                 }
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                spinnerBankOptions.visibility = View.GONE
-                textViewVirtualAccount.visibility = View.GONE
-                editTextCardNumber.visibility = View.GONE
-                editTextExpiryDate.visibility = View.GONE
-                editTextPhoneNumber.visibility = View.GONE
-                buttonAddCard.visibility = View.GONE
+            override fun onNothingSelected(parentView: AdapterView<*>) {
+                // Handle case where no item is selected (optional)
             }
         }
 
-        spinnerBankOptions.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selectedBank = bankOptions[position]
-                val customerId = "12345678"
-                val virtualAccount = "${bankVaPrefixes[selectedBank]}$customerId"
-                textViewVirtualAccount.text = "Virtual Account: $virtualAccount"
-                textViewVirtualAccount.visibility = View.VISIBLE
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                textViewVirtualAccount.visibility = View.GONE
-            }
-        }
-
+        // Confirm payment button logic
+        val buttonConfirmPayment: Button = findViewById(R.id.buttonConfirmPayment)
         buttonConfirmPayment.setOnClickListener {
             val selectedPaymentMethod = spinnerPaymentMethod.selectedItem.toString()
+            val selectedBank = spinnerBankOptions.selectedItem.toString()
 
-            if (selectedPaymentMethod == "Kartu Kredit/Debit" || selectedPaymentMethod == "BCA OneKlik" || selectedPaymentMethod == "BRI Direct Debit") {
-                val cardNumber = editTextCardNumber.text.toString()
-                if (cardNumber.isEmpty()) {
-                    Toast.makeText(this, "Masukkan nomor kartu!", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
+            // Show Virtual Account format based on selected bank
+            val virtualAccount = when (selectedBank) {
+                "Bank BCA" -> "014 + [Nomor Pelanggan]"
+                "Bank Mandiri" -> "008 + [Nomor Pelanggan]"
+                "Bank BRI" -> "002 + [Nomor Pelanggan]"
+                "Bank BNI" -> "009 + [Nomor Pelanggan]"
+                "Bank CIMB Niaga" -> "022 + [Nomor Pelanggan]"
+                "Bank Permata" -> "013 + [Nomor Pelanggan]"
+                "Bank Danamon" -> "011 + [Nomor Pelanggan]"
+                "Bank BTN" -> "200 + [Nomor Pelanggan]"
+                "Bank Syariah Indonesia" -> "451 + [Nomor Pelanggan]"
+                else -> ""
             }
-
-            val selectedBank = if (spinnerBankOptions.visibility == View.VISIBLE) {
-                spinnerBankOptions.selectedItem.toString()
-            } else {
-                ""
-            }
+            findViewById<TextView>(R.id.textViewVirtualAccount).text = "Virtual Account: $virtualAccount"
 
             if (selectedPaymentMethod == "Transfer Bank" && selectedBank.isEmpty()) {
                 Toast.makeText(this, "Pilih bank untuk transfer!", Toast.LENGTH_SHORT).show()
             } else {
+                Toast.makeText(this, "Pembayaran dengan metode: $selectedPaymentMethod berhasil.", Toast.LENGTH_SHORT).show()
+
+                // After payment is confirmed, clear the cart
                 cartDatabaseHelper.clearCart()
 
-                Toast.makeText(this, "Pembayaran berhasil dengan metode: $selectedPaymentMethod.", Toast.LENGTH_SHORT).show()
-
-                val intent = Intent(this, MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                // Navigate back to CartActivity and refresh the cart view
+                val intent = Intent(this, CartActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP  // Clear the current activity stack
                 startActivity(intent)
-                finish()
+
+                finish() // Close the PaymentActivity
             }
         }
     }
 
+    // Helper function to hide all payment-related fields
+    private fun hideAllFields() {
+        // Hide fields for all payment methods
+        findViewById<View>(R.id.textViewBankOptionsLabel).visibility = View.GONE
+        findViewById<View>(R.id.spinnerBankOptions).visibility = View.GONE
+        findViewById<View>(R.id.textViewVirtualAccount).visibility = View.GONE
+        findViewById<View>(R.id.editTextCardNumber).visibility = View.GONE
+        findViewById<View>(R.id.editTextExpiryDate).visibility = View.GONE
+        findViewById<View>(R.id.editTextCVV).visibility = View.GONE
+        findViewById<View>(R.id.editTextPhoneNumber).visibility = View.GONE
+        findViewById<View>(R.id.buttonAddCard).visibility = View.GONE
+        findViewById<View>(R.id.editTextCardLimit).visibility = View.GONE
+        findViewById<View>(R.id.editTextActivationMethod).visibility = View.GONE
+    }
+
+    // Helper function to format price as "Rp."
     private fun formatPrice(price: Double): String {
-        val localeID = Locale("id", "ID")
-        val numberFormat = NumberFormat.getCurrencyInstance(localeID)
+        val numberFormat = java.text.NumberFormat.getCurrencyInstance(Locale("id", "ID"))
         return numberFormat.format(price).replace("Rp", "Rp.").replace(",00", "")
     }
 }

@@ -29,17 +29,14 @@ class DetailActivity : AppCompatActivity() {
         val addToCartButton: Button = findViewById(R.id.buttonAddToCart)
         addToCartButton.setOnClickListener {
             val itemName = intent.getStringExtra("ITEM_NAME") ?: "Item Name"
-            val itemPriceText = intent.getStringExtra("ITEM_PRICE") ?: "0.0"
+            val itemPriceText = intent.getStringExtra("ITEM_PRICE") ?: "0.0" // Price comes as String
             val itemImageUrl = intent.getStringExtra("ITEM_IMAGE_URL") ?: ""
 
-            // Konversi harga dari String ke Double
-            val itemPrice = itemPriceText.toDoubleOrNull() ?: run {
-                Toast.makeText(this, "Invalid price format", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+            // Konversi harga dari String ke Double, tetap gunakan String untuk simpanan
+            val itemPrice = itemPriceText.toString() // Keeping price as String, not converting to Double
 
             // Tambahkan item ke keranjang
-            cartDatabaseHelper.addItemToCart(itemName, itemPrice, 1, itemImageUrl)
+            cartDatabaseHelper.addItemToCart(itemName, itemPrice, "1", itemImageUrl) // Using String for quantity
             Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show()
 
             // Arahkan ke CartActivity
@@ -57,11 +54,10 @@ class DetailActivity : AppCompatActivity() {
         val itemName = intent.getStringExtra("ITEM_NAME") ?: "Item Name"
         val itemPriceText = intent.getStringExtra("ITEM_PRICE") ?: "0.0"
         val itemDescription = intent.getStringExtra("ITEM_DESCRIPTION") ?: "No description available"
-        val itemImageUrl = intent.getStringExtra("ITEM_IMAGE_URL")
+        val itemImageUrl = intent.getStringExtra("ITEM_IMAGE_URL") ?: ""
 
-        // Konversi harga untuk tampilan
-        val itemPrice = itemPriceText.toDoubleOrNull() ?: 0.0
-        val formattedPrice = formatPrice(itemPrice)
+        // Format price as String
+        val formattedPrice = formatPrice(itemPriceText)
 
         // Set data ke elemen UI
         itemNameTextView.text = itemName
@@ -73,8 +69,10 @@ class DetailActivity : AppCompatActivity() {
     }
 
     // Helper function to format the price as "Rp."
-    private fun formatPrice(price: Double): String {
+    private fun formatPrice(price: String): String {
+        // Convert String price to Double before formatting
         val numberFormat = NumberFormat.getCurrencyInstance(Locale("id", "ID"))
-        return numberFormat.format(price).replace("Rp", "Rp.").replace(",00", "")
+        val priceDouble = price.toDoubleOrNull() ?: 0.0
+        return numberFormat.format(priceDouble).replace("Rp", "Rp.").replace(",00", "")
     }
 }

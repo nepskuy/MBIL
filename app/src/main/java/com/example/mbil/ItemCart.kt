@@ -1,7 +1,9 @@
+package com.example.mbil
+
 data class ItemCart(
-    val id: String,
+    val id: String,            // ID is a String
     val name: String,
-    val price: Double,
+    val price: Double,         // Price is a Double
     val imageUrl: String,
-    var quantity: Int
+    var quantity: Int          // Quantity is an Int
 )
