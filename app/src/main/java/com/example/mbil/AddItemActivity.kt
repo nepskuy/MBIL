@@ -155,14 +155,14 @@ class AddItemActivity : AppCompatActivity() {
             return
         }
 
-        val price = priceText.toDoubleOrNull()
-        if (price == null) {
-            Toast.makeText(this, "Please enter a valid price!", Toast.LENGTH_SHORT).show()
-            return
-        }
-
         uploadImageToStorage { imageUrl ->
-            val itemData = Item(id, name, description, price, imageUrl)
+            val itemData = Item(
+                id = id,
+                name = name,
+                description = description,
+                price = priceText, // Menyimpan price sebagai String
+                imageUrl = imageUrl
+            )
             database.child(id).setValue(itemData).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(this, "Item added successfully!", Toast.LENGTH_SHORT).show()

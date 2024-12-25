@@ -31,23 +31,29 @@ class MainActivity : AppCompatActivity() {
         // Inisialisasi Database Firebase
         database = FirebaseDatabase.getInstance().reference.child("items")
 
-        // Mengambil data dari Firebase
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 itemList.clear()
                 for (itemSnapshot in snapshot.children) {
-                    val item = itemSnapshot.getValue(Item::class.java)
-                    if (item != null) {
-                        itemList.add(item)
+                    try {
+                        val item = itemSnapshot.getValue(Item::class.java)
+                        if (item != null) {
+                            itemList.add(item)
+                        } else {
+                            Toast.makeText(this@MainActivity, "Data item tidak valid", Toast.LENGTH_SHORT).show()
+                        }
+                    } catch (e: Exception) {
+                        Toast.makeText(this@MainActivity, "Gagal memproses data: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
                 adapter.notifyDataSetChanged()
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@MainActivity, "Gagal mengambil data", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "Gagal mengambil data: ${error.message}", Toast.LENGTH_SHORT).show()
             }
         })
+
 
         // Menambahkan logika untuk membuka About Us Activity
         val aboutUsButton = findViewById<Button>(R.id.aboutUsButton)

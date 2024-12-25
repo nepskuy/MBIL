@@ -1,5 +1,6 @@
 package com.example.mbil
 
+import ItemCart
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +13,9 @@ import java.text.NumberFormat
 import java.util.*
 
 class CartAdapter(
-    private val cartItems: MutableList<ItemCart>, // Menggunakan ItemCart sebagai data model
-    private val onRemoveClick: (ItemCart) -> Unit // Callback untuk tombol Remove
+    private val cartItems: MutableList<ItemCart>,
+    private val onRemoveClick: (ItemCart) -> Unit,
+    private val onQuantityChanged: (ItemCart) -> Unit // Callback untuk pembaruan quantity
 ) : RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
 
     inner class CartViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -43,17 +45,19 @@ class CartAdapter(
         holder.increaseQuantityButton.setOnClickListener {
             cartItem.quantity++
             notifyItemChanged(position)
+            onQuantityChanged(cartItem) // Panggil callback untuk memperbarui total harga
         }
 
         holder.decreaseQuantityButton.setOnClickListener {
             if (cartItem.quantity > 1) {
                 cartItem.quantity--
                 notifyItemChanged(position)
+                onQuantityChanged(cartItem) // Panggil callback untuk memperbarui total harga
             }
         }
 
         holder.removeButton.setOnClickListener {
-            onRemoveClick(cartItem)
+            onRemoveClick(cartItem) // Panggil callback untuk menghapus item
         }
     }
 

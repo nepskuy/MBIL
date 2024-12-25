@@ -1,5 +1,6 @@
 package com.example.mbil
 
+import ItemCart
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -29,15 +30,23 @@ class CartActivity : AppCompatActivity() {
         // Mengambil data dari database
         cartItems = cartDatabaseHelper.getCartItems().toMutableList()
 
-        cartAdapter = CartAdapter(cartItems) { cartItem ->
-            cartDatabaseHelper.deleteItemFromCart(cartItem.id)
-            cartAdapter.removeItem(cartItem)
-            updateTotalPrice()
-            Toast.makeText(this, "${cartItem.name} removed from cart", Toast.LENGTH_SHORT).show()
-        }
+        // Inisialisasi adapter dengan callback untuk pembaruan quantity dan penghapusan item
+        cartAdapter = CartAdapter(
+            cartItems,
+            onRemoveClick = { cartItem ->
+                cartDatabaseHelper.deleteItemFromCart(cartItem.id)
+                cartAdapter.removeItem(cartItem)
+                updateTotalPrice()
+                Toast.makeText(this, "${cartItem.name} removed from cart", Toast.LENGTH_SHORT).show()
+            },
+            onQuantityChanged = { cartItem ->
+                cartDatabaseHelper.updateQuantity(cartItem.id, cartItem.quantity) // Memperbarui quantity di database
+                updateTotalPrice() // Perbarui total harga
+            }
+        )
+
 
         recyclerView.adapter = cartAdapter
-
 
         // Update total harga saat pertama kali
         updateTotalPrice()

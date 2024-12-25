@@ -30,8 +30,9 @@ class ItemAdapter(private val itemList: List<Item>) : RecyclerView.Adapter<ItemA
         holder.nameTextView.text = item.name
         holder.descriptionTextView.text = item.description
 
-        // Format price as currency (Rp)
-        val formattedPrice = formatCurrency(item.price)
+        // Konversi price (String) menjadi Double untuk format currency
+        val priceDouble = item.price?.toDoubleOrNull() ?: 0.0
+        val formattedPrice = formatCurrency(priceDouble)
         holder.priceTextView.text = formattedPrice
 
         // Load image using Glide
@@ -45,7 +46,7 @@ class ItemAdapter(private val itemList: List<Item>) : RecyclerView.Adapter<ItemA
             val intent = Intent(context, DetailActivity::class.java)
             intent.putExtra("ITEM_NAME", item.name)
             intent.putExtra("ITEM_DESCRIPTION", item.description)
-            intent.putExtra("ITEM_PRICE", item.price.toString()) // Convert Double to String for intent
+            intent.putExtra("ITEM_PRICE", item.price) // Tetap menggunakan String
             intent.putExtra("ITEM_IMAGE_URL", item.imageUrl)
             context.startActivity(intent)
         }
