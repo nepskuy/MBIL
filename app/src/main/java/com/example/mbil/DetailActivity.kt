@@ -32,23 +32,19 @@ class DetailActivity : AppCompatActivity() {
             val itemPriceText = intent.getStringExtra("ITEM_PRICE") ?: "0.0"
             val itemImageUrl = intent.getStringExtra("ITEM_IMAGE_URL") ?: ""
 
-            // Konversi harga dari String ke Double dengan validasi null
+            // Konversi harga dari String ke Double
             val itemPrice = itemPriceText.toDoubleOrNull() ?: run {
                 Toast.makeText(this, "Invalid price format", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener // Keluar dari listener jika harga tidak valid
+                return@setOnClickListener
             }
 
-            // Simpan ke database
-            val result = cartDatabaseHelper.addItemToCart(itemName, itemPrice, 1, itemImageUrl)
-            if (result != -1L) {
-                Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show()
+            // Tambahkan item ke keranjang
+            cartDatabaseHelper.addItemToCart(itemName, itemPrice, 1, itemImageUrl)
+            Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show()
 
-                // Arahkan ke CartActivity
-                val intent = Intent(this, CartActivity::class.java)
-                startActivity(intent)
-            } else {
-                Toast.makeText(this, "Failed to add item", Toast.LENGTH_SHORT).show()
-            }
+            // Arahkan ke CartActivity
+            val intent = Intent(this, CartActivity::class.java)
+            startActivity(intent)
         }
 
         // Inisialisasi elemen UI
@@ -61,7 +57,7 @@ class DetailActivity : AppCompatActivity() {
         val itemName = intent.getStringExtra("ITEM_NAME") ?: "Item Name"
         val itemPriceText = intent.getStringExtra("ITEM_PRICE") ?: "0.0"
         val itemDescription = intent.getStringExtra("ITEM_DESCRIPTION") ?: "No description available"
-        val itemImageUrl = intent.getStringExtra("ITEM_IMAGE_URL") // URL gambar item
+        val itemImageUrl = intent.getStringExtra("ITEM_IMAGE_URL")
 
         // Konversi harga untuk tampilan
         val itemPrice = itemPriceText.toDoubleOrNull() ?: 0.0

@@ -1,6 +1,7 @@
 package com.example.mbil
 
 import ItemCart
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -27,10 +28,38 @@ class CartActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerViewCart)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Mengambil data dari database
-        cartItems = cartDatabaseHelper.getCartItems().toMutableList()
+        loadCartItems()
 
-        // Inisialisasi adapter dengan callback untuk pembaruan quantity dan penghapusan item
+        // Tombol Clear Cart
+        findViewById<Button>(R.id.buttonClearCart).setOnClickListener {
+            clearCart()
+        }
+
+        // Tombol Checkout
+        findViewById<Button>(R.id.buttonCheckout).setOnClickListener {
+            if (cartItems.isNotEmpty()) {
+                // Arahkan ke halaman PaymentActivity
+                val intent = Intent(this, PaymentActivity::class.java)
+
+                // Kirim total harga ke PaymentActivity
+                val totalPrice = cartItems.sumOf { it.price * it.quantity }
+                intent.putExtra("TOTAL_PRICE", totalPrice)
+
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "Cart is empty", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Memuat ulang item keranjang setelah kembali dari PaymentActivity
+        loadCartItems()
+    }
+
+    private fun loadCartItems() {
+        cartItems = cartDatabaseHelper.getCartItems().toMutableList()
         cartAdapter = CartAdapter(
             cartItems,
             onRemoveClick = { cartItem ->
@@ -44,37 +73,26 @@ class CartActivity : AppCompatActivity() {
                 updateTotalPrice() // Perbarui total harga
             }
         )
-
-
         recyclerView.adapter = cartAdapter
-
-        // Update total harga saat pertama kali
         updateTotalPrice()
+    }
 
-        // Tombol Clear Cart
-        findViewById<Button>(R.id.buttonClearCart).setOnClickListener {
-            cartDatabaseHelper.clearCart()
-            cartItems.clear()
-            updateTotalPrice()
-            cartAdapter.notifyDataSetChanged()
-            Toast.makeText(this, "Cart cleared", Toast.LENGTH_SHORT).show()
-        }
-
-        // Tombol Checkout
-        findViewById<Button>(R.id.buttonCheckout).setOnClickListener {
-            if (cartItems.isNotEmpty()) {
-                // Arahkan ke halaman pembayaran atau lakukan proses lainnya
-                Toast.makeText(this, "Checkout successful", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Cart is empty", Toast.LENGTH_SHORT).show()
-            }
-        }
+    private fun clearCart() {
+        cartDatabaseHelper.clearCart()
+        cartItems.clear()
+        updateTotalPrice()
+        cartAdapter.notifyDataSetChanged()
+        Toast.makeText(this, "Cart cleared", Toast.LENGTH_SHORT).show()
     }
 
     // Fungsi untuk menghitung total harga dan memperbarui UI
     private fun updateTotalPrice() {
         val totalPrice = cartItems.sumOf { it.price * it.quantity }
         findViewById<TextView>(R.id.textViewTotalPrice).text = formatPrice(totalPrice)
+
+        if (cartItems.isEmpty()) {
+            Toast.makeText(this, "Your cart is empty!", Toast.LENGTH_SHORT).show()
+        }
     }
 
     // Fungsi untuk format harga ke format Rupiah

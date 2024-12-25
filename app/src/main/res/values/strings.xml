@@ -1,3 +1,23 @@
 <resources>
-    <string name="app_name">MBIL</string>
+    <string name="app_name">MBil</string>
+    <string name="select_payment_method">Pilih Metode Pembayaran</string>
+    <string name="select_bank">Pilih Bank</string>
+
+    <string-array name="payment_methods">
+        <item>Tunai</item>
+        <item>Kartu Kredit/Debit</item>
+        <item>Transfer Bank</item>
+        <item>BCA OneKlik</item>
+        <item>BRI Direct Debit</item>
+    </string-array>
+
+    <string-array name="bank_options">
+        <item>Bank BCA</item>
+        <item>SeaBank</item>
+        <item>Bank Mandiri</item>
+        <item>Bank BNI</item>
+        <item>Bank BRI</item>
+        <item>Bank Syariah Indonesia</item>
+        <item>Bank Permata</item>
+    </string-array>
 </resources>

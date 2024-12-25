@@ -63,27 +63,10 @@
             android:layout_gravity="center"
             android:layout_marginBottom="16dp"
             android:numStars="5"
-            android:rating="5"/>
+            android:rating="5"
+            android:isIndicator="true" />
 
-
-
-        <!-- Empty LinearLayout to push MBIL text to the bottom -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:weightSum="1" />
-
-        <!-- Text "MBIL" at the bottom -->
-        <TextView
-            android:id="@+id/textViewMBIL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="MBIL"
-            android:textColor="#345597"
-            android:textSize="48sp"
-            android:textStyle="bold"
-            android:gravity="center" />
-
+        <!-- Button to add to cart -->
         <Button
             android:id="@+id/buttonAddToCart"
             android:layout_width="match_parent"
@@ -92,7 +75,6 @@
             android:backgroundTint="#345597"
             android:text="Add to Cart"
             android:textColor="#FFFFFF" />
-
 
     </LinearLayout>
 </ScrollView>

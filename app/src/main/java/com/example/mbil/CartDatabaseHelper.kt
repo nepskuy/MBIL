@@ -39,15 +39,46 @@ class CartDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
     }
 
     // Fungsi untuk menambahkan item ke keranjang
-    fun addItemToCart(name: String, price: Double, quantity: Int, imageUrl: String): Long {
+    fun addItemToCart(name: String, price: Double, quantity: Int, imageUrl: String) {
         val db = writableDatabase
-        val values = ContentValues().apply {
-            put(COLUMN_NAME, name)
-            put(COLUMN_PRICE, price)
-            put(COLUMN_QUANTITY, quantity)
-            put(COLUMN_IMAGE_URL, imageUrl)
+        val cursor = db.query(
+            TABLE_NAME,
+            null,
+            "$COLUMN_NAME = ? AND $COLUMN_PRICE = ? AND $COLUMN_IMAGE_URL = ?",
+            arrayOf(name, price.toString(), imageUrl),
+            null,
+            null,
+            null
+        )
+
+        if (cursor.moveToFirst()) {
+            // Jika item sudah ada, perbarui kuantitas
+            val existingQuantity = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_QUANTITY))
+            val newQuantity = existingQuantity + quantity
+
+            val values = ContentValues().apply {
+                put(COLUMN_QUANTITY, newQuantity)
+            }
+
+            db.update(
+                TABLE_NAME,
+                values,
+                "$COLUMN_NAME = ? AND $COLUMN_PRICE = ? AND $COLUMN_IMAGE_URL = ?",
+                arrayOf(name, price.toString(), imageUrl)
+            )
+        } else {
+            // Jika item belum ada, tambahkan sebagai item baru
+            val values = ContentValues().apply {
+                put(COLUMN_NAME, name)
+                put(COLUMN_PRICE, price)
+                put(COLUMN_QUANTITY, quantity)
+                put(COLUMN_IMAGE_URL, imageUrl)
+            }
+            db.insert(TABLE_NAME, null, values)
         }
-        return db.insert(TABLE_NAME, null, values)
+
+        cursor.close()
+        db.close() // Tutup database
     }
 
     // Fungsi untuk mengambil semua item dari keranjang
@@ -67,6 +98,7 @@ class CartDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
                 items.add(ItemCart(id, name, price, imageUrl, quantity))
             }
         }
+        db.close() // Tutup database
         return items
     }
 
@@ -77,6 +109,7 @@ class CartDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
             put(COLUMN_QUANTITY, newQuantity)
         }
         val rowsAffected = db.update(TABLE_NAME, values, "$COLUMN_ID = ?", arrayOf(itemId))
+        db.close() // Tutup database
         return rowsAffected > 0
     }
 
@@ -84,11 +117,13 @@ class CartDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
     fun deleteItemFromCart(itemId: String) {
         val db = writableDatabase
         db.delete(TABLE_NAME, "$COLUMN_ID = ?", arrayOf(itemId))
+        db.close() // Tutup database
     }
 
     // Fungsi untuk menghapus semua item dari keranjang
     fun clearCart() {
         val db = writableDatabase
         db.delete(TABLE_NAME, null, null)
+        db.close() // Tutup database
     }
 }
