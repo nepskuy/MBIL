@@ -8,7 +8,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -31,8 +30,9 @@ class ItemAdapter(private val itemList: List<Item>) : RecyclerView.Adapter<ItemA
         holder.nameTextView.text = item.name
         holder.descriptionTextView.text = item.description
 
-        // Format price as currency (Rp)
-        val formattedPrice = formatCurrency(item.price)
+        // Konversi price (String) menjadi Double untuk format currency
+        val priceDouble = item.price?.toDoubleOrNull() ?: 0.0
+        val formattedPrice = formatCurrency(priceDouble)
         holder.priceTextView.text = formattedPrice
 
         // Load image using Glide
@@ -46,7 +46,7 @@ class ItemAdapter(private val itemList: List<Item>) : RecyclerView.Adapter<ItemA
             val intent = Intent(context, DetailActivity::class.java)
             intent.putExtra("ITEM_NAME", item.name)
             intent.putExtra("ITEM_DESCRIPTION", item.description)
-            intent.putExtra("ITEM_PRICE", item.price)
+            intent.putExtra("ITEM_PRICE", item.price) // Tetap menggunakan String
             intent.putExtra("ITEM_IMAGE_URL", item.imageUrl)
             context.startActivity(intent)
         }
@@ -57,19 +57,11 @@ class ItemAdapter(private val itemList: List<Item>) : RecyclerView.Adapter<ItemA
     }
 
     // Helper function to format price as currency
-    // Helper function to format price as currency
-    private fun formatCurrency(price: String): String {
-        // Remove any non-numeric characters except the dot (for decimals)
-        val priceCleaned = price.replace("[^0-9.]".toRegex(), "").toDoubleOrNull() ?: 0.0
-
+    private fun formatCurrency(price: Double): String {
         // Format as currency with thousands separator, without decimals
-        val formattedPrice = NumberFormat.getNumberInstance(Locale("id", "ID")).format(priceCleaned)
+        val formattedPrice = NumberFormat.getNumberInstance(Locale("id", "ID")).format(price)
 
         // Add "Rp." manually in front of the formatted price
         return "Rp. $formattedPrice"
     }
-
 }
-
-
-

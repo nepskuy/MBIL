@@ -1,126 +1,192 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="#345597">
+    android:padding="16dp">
 
-    <!-- TextView untuk menampilkan total harga -->
+    <!-- Rincian Pembayaran -->
     <TextView
-        android:id="@+id/textViewTotalAmount"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:text="Total Amount: Rp. 0"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/white"
-        android:gravity="center" />
-
-    <!-- TextView untuk label opsi pengiriman -->
-    <TextView
-        android:id="@+id/textViewShippingOption"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="Pilih Opsi Pengiriman:"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/white" />
-
-    <!-- RadioGroup untuk opsi pengiriman -->
-    <RadioGroup
-        android:id="@+id/radioGroupShippingOptions"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginBottom="16dp">
-
-        <RadioButton
-            android:id="@+id/radioButtonRegular"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Reguler"
-            android:buttonTint="@drawable/radio_button"
-            android:textColor="@android:color/white" />
-
-        <RadioButton
-            android:id="@+id/radioButtonExpress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ekspres"
-            android:buttonTint="@drawable/radio_button"
-            android:textColor="@android:color/white" />
-
-        <RadioButton
-            android:id="@+id/radioButtonCOD"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="COD (Cash on Delivery)"
-            android:buttonTint="@drawable/radio_button"
-            android:textColor="@android:color/white" />
-    </RadioGroup>
-
-    <!-- TextView untuk label metode pembayaran -->
-    <TextView
-        android:id="@+id/textViewPaymentMethod"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="Pilih Metode Pembayaran:"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/white" />
-
-    <!-- RadioGroup untuk metode pembayaran -->
-    <RadioGroup
-        android:id="@+id/radioGroupPaymentMethods"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginBottom="16dp">
-
-        <RadioButton
-            android:id="@+id/radioButtonCash"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cash"
-            android:buttonTint="@drawable/radio_button"
-            android:textColor="@android:color/white" />
-
-        <RadioButton
-            android:id="@+id/radioButtonBankATM"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bank (ATM)"
-            android:buttonTint="@drawable/radio_button"
-            android:textColor="@android:color/white" />
-
-        <RadioButton
-            android:id="@+id/radioButtonBankVirtual"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bank (Virtual)"
-            android:buttonTint="@drawable/radio_button"
-            android:textColor="@android:color/white" />
-    </RadioGroup>
-
-    <!-- Spacer -->
-    <View
+        android:id="@+id/textViewPaymentDetailsLabel"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <!-- Tombol untuk menyelesaikan pembayaran -->
-    <Button
-        android:id="@+id/buttonCompletePayment"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Finish Payment"
-        android:textColor="@android:color/white"
-        android:backgroundTint="#FF6750A4"
-        android:elevation="4dp" />
+        android:text="Rincian Pembayaran"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#345597"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-</LinearLayout>
+    <!-- Total Harga -->
+    <TextView
+        android:id="@+id/textViewTotalPrice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Total Harga: Rp. 0"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/textViewPaymentDetailsLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Spinner untuk Metode Pembayaran -->
+    <TextView
+        android:id="@+id/textViewPaymentMethodLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pilih Metode Pembayaran"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/textViewTotalPrice"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Spinner
+        android:id="@+id/spinnerPaymentMethod"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/textViewPaymentMethodLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Spinner untuk Bank -->
+    <TextView
+        android:id="@+id/textViewBankOptionsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pilih Bank (untuk Transfer Bank)"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/spinnerPaymentMethod"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Spinner
+        android:id="@+id/spinnerBankOptions"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/textViewBankOptionsLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Virtual Account -->
+    <TextView
+        android:id="@+id/textViewVirtualAccount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Virtual Account: "
+        android:textSize="16sp"
+        android:visibility="gone"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/spinnerBankOptions"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Input Nomor Kartu -->
+    <EditText
+        android:id="@+id/editTextCardNumber"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Nomor Kartu"
+        android:inputType="number"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/spinnerPaymentMethod"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <!-- Input Tanggal Kadaluarsa -->
+    <EditText
+        android:id="@+id/editTextExpiryDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Tanggal Kadaluarsa (MM/YY)"
+        android:inputType="text"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/editTextCardNumber"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <!-- Input CVV -->
+    <EditText
+        android:id="@+id/editTextCVV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="CVV"
+        android:inputType="numberPassword"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/editTextExpiryDate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <!-- Input Nomor Telepon -->
+    <EditText
+        android:id="@+id/editTextPhoneNumber"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Nomor Telepon"
+        android:inputType="phone"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/editTextCVV"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <!-- Tombol Tambah Kartu -->
+    <Button
+        android:id="@+id/buttonAddCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="+ Tambah Kartu"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/editTextPhoneNumber"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <!-- Card Limit (For BCA OneKlik / BRI Direct Debit) -->
+    <EditText
+        android:id="@+id/editTextCardLimit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Card Limit"
+        android:inputType="number"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/editTextCardNumber"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <!-- Activation Method (For BCA OneKlik / BRI Direct Debit) -->
+    <EditText
+        android:id="@+id/editTextActivationMethod"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Activation Method (Phone, Email, WA)"
+        android:inputType="text"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/editTextCardLimit"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <!-- Tombol Konfirmasi Pembayaran -->
+    <Button
+        android:id="@+id/buttonConfirmPayment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Konfirmasi Pembayaran"
+        android:backgroundTint="#345597"
+        android:textColor="#FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

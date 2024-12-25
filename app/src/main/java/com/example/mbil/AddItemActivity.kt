@@ -21,11 +21,11 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AddItemActivity : AppCompatActivity() { //logika halaman admin
+class AddItemActivity : AppCompatActivity() {
 
     private lateinit var database: DatabaseReference
     private lateinit var storage: FirebaseStorage
-    private lateinit var imageUri: Uri
+    private var imageUri: Uri? = null // Pastikan imageUri null-safe
     private lateinit var imageView: ImageView
 
     private lateinit var cameraLauncher: ActivityResultLauncher<Intent>
@@ -43,6 +43,7 @@ class AddItemActivity : AppCompatActivity() { //logika halaman admin
         storage = FirebaseStorage.getInstance()
 
         imageView = findViewById(R.id.imageViewItem)
+
         val buttonSelectImage = findViewById<Button>(R.id.buttonSelectImage)
         val buttonAddItem = findViewById<Button>(R.id.buttonAddItem)
 
@@ -63,7 +64,7 @@ class AddItemActivity : AppCompatActivity() { //logika halaman admin
         // Gallery launcher setup
         galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK && result.data != null) {
-                imageUri = result.data!!.data!!
+                imageUri = result.data!!.data
                 imageView.setImageURI(imageUri)
             }
         }
@@ -126,8 +127,13 @@ class AddItemActivity : AppCompatActivity() { //logika halaman admin
     }
 
     private fun uploadImageToStorage(onSuccess: (String) -> Unit) {
+        if (imageUri == null) {
+            Toast.makeText(this, "Please select an image first!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val storageRef = storage.reference.child("item_images/${System.currentTimeMillis()}.jpg")
-        storageRef.putFile(imageUri)
+        storageRef.putFile(imageUri!!)
             .addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { uri ->
                     onSuccess(uri.toString())
@@ -142,15 +148,21 @@ class AddItemActivity : AppCompatActivity() { //logika halaman admin
         val id = findViewById<EditText>(R.id.editTextItemId).text.toString().trim()
         val name = findViewById<EditText>(R.id.editTextItemName).text.toString().trim()
         val description = findViewById<EditText>(R.id.editTextItemDescription).text.toString().trim()
-        val price = findViewById<EditText>(R.id.editTextItemPrice).text.toString().trim()
+        val priceText = findViewById<EditText>(R.id.editTextItemPrice).text.toString().trim()
 
-        if (id.isEmpty() || name.isEmpty() || description.isEmpty() || price.isEmpty() || !::imageUri.isInitialized) {
+        if (id.isEmpty() || name.isEmpty() || description.isEmpty() || priceText.isEmpty() || imageUri == null) {
             Toast.makeText(this, "Please fill out all fields and select an image!", Toast.LENGTH_SHORT).show()
             return
         }
 
         uploadImageToStorage { imageUrl ->
-            val itemData = Item(id, name, description, price, imageUrl)
+            val itemData = Item(
+                id = id,
+                name = name,
+                description = description,
+                price = priceText, // Menyimpan price sebagai String
+                imageUrl = imageUrl
+            )
             database.child(id).setValue(itemData).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(this, "Item added successfully!", Toast.LENGTH_SHORT).show()
@@ -168,5 +180,6 @@ class AddItemActivity : AppCompatActivity() { //logika halaman admin
         findViewById<EditText>(R.id.editTextItemDescription).text.clear()
         findViewById<EditText>(R.id.editTextItemPrice).text.clear()
         imageView.setImageResource(0)
+        imageUri = null
     }
 }

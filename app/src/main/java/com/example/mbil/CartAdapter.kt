@@ -1,6 +1,5 @@
 package com.example.mbil
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,68 +8,88 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import java.text.NumberFormat
+import java.util.*
 
 class CartAdapter(
-    private val cartItemList: MutableList<CartItem>,
-    private val onRemoveClick: (CartItem) -> Unit
+    private val cartItems: MutableList<ItemCart>,   // The cartItems list of ItemCart objects
+    private val onRemoveClick: (ItemCart) -> Unit,   // Callback for item removal
+    private val onQuantityChanged: (ItemCart) -> Unit // Callback for quantity change
 ) : RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
 
-    // ViewHolder class to hold the item views for each cart item
-    class CartViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    // ViewHolder for binding data to each item in the RecyclerView
+    inner class CartViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val itemImageView: ImageView = itemView.findViewById(R.id.imageViewCartItem)
-        val nameTextView: TextView = itemView.findViewById(R.id.textViewCartItemName)
-        val priceTextView: TextView = itemView.findViewById(R.id.textViewCartItemPrice)
-        val quantityTextView: TextView = itemView.findViewById(R.id.textViewCartItemQuantity)
+        val itemNameTextView: TextView = itemView.findViewById(R.id.textViewCartItemName)
+        val itemPriceTextView: TextView = itemView.findViewById(R.id.textViewCartItemPrice)
+        val itemQuantityTextView: TextView = itemView.findViewById(R.id.textViewCartItemQuantity)
+        val increaseQuantityButton: Button = itemView.findViewById(R.id.buttonIncreaseQuantity)
+        val decreaseQuantityButton: Button = itemView.findViewById(R.id.buttonDecreaseQuantity)
         val removeButton: Button = itemView.findViewById(R.id.buttonRemoveItem)
     }
 
+    // Creates a new ViewHolder and inflates the item layout for each cart item
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
-        // Inflate the cart item layout for each view holder
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.cart_item_layout, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_cart, parent, false)
         return CartViewHolder(view)
     }
 
+    // Binds data from cartItems to each view in the ViewHolder
     override fun onBindViewHolder(holder: CartViewHolder, position: Int) {
-        // Get the cart item from the list at the specified position
-        val cartItem = cartItemList[position]
+        if (position !in cartItems.indices) return // Ensure the position is valid
 
-        // Set item name and price
-        holder.nameTextView.text = cartItem.name
-        holder.priceTextView.text = cartItem.price
-        holder.quantityTextView.text = "Qty: ${cartItem.quantity}"
+        val cartItem = cartItems[position]
 
-        // If imageUrl is provided, load the image using Glide
-        if (!cartItem.imageUrl.isNullOrEmpty()) {
-            Log.d("CartAdapter", "Loading image URL: ${cartItem.imageUrl}")
-            Glide.with(holder.itemView.context)
-                .load(cartItem.imageUrl)
-                .placeholder(R.drawable.default_image)
-                .error(R.drawable.default_image)
-                .into(holder.itemImageView)
-        } else {
-            Log.d("CartAdapter", "Image URL is null or empty")
-            holder.itemImageView.setImageResource(R.drawable.default_image)
+        // Set the name, formatted price, and quantity of the item
+        holder.itemNameTextView.text = cartItem.name
+        holder.itemPriceTextView.text = formatPrice(cartItem.price * cartItem.quantity) // Format price to Rupiah
+        holder.itemQuantityTextView.text = cartItem.quantity.toString() // Display the quantity as a string
 
+        // Use Glide to load the item image into the ImageView
+        Glide.with(holder.itemView.context)
+            .load(cartItem.imageUrl)
+            .placeholder(android.R.drawable.ic_menu_gallery) // Placeholder image if not found
+            .error(android.R.drawable.ic_menu_report_image) // Error image if the image URL is incorrect
+            .into(holder.itemImageView)
+
+        // Increase quantity button click listener
+        holder.increaseQuantityButton.setOnClickListener {
+            cartItem.quantity++
+            notifyItemChanged(position)
+            onQuantityChanged(cartItem) // Callback to update quantity in the database
         }
 
-        Log.d("CartAdapter", "Image URL: ${cartItem.imageUrl}") // Untuk log URL
+        // Decrease quantity button click listener
+        holder.decreaseQuantityButton.setOnClickListener {
+            if (cartItem.quantity > 1) {
+                cartItem.quantity--
+                notifyItemChanged(position)
+                onQuantityChanged(cartItem) // Callback to update quantity in the database
+            }
+        }
 
-
-        // Handle the remove button click to remove item from the cart
+        // Remove item button click listener
         holder.removeButton.setOnClickListener {
-            onRemoveClick(cartItem)
+            onRemoveClick(cartItem) // Callback to remove the item from the cart and database
         }
     }
 
-    override fun getItemCount(): Int {
-        // Return the total number of items in the cart
-        return cartItemList.size
+    // Returns the total number of items in the cart
+    override fun getItemCount(): Int = cartItems.size
+
+    // Function to remove an item from the cart and update the RecyclerView
+    fun removeItem(cartItem: ItemCart) {
+        val position = cartItems.indexOf(cartItem)
+        if (position != -1) {
+            cartItems.removeAt(position)
+            notifyItemRemoved(position) // Notify the adapter that an item has been removed
+        }
     }
 
-    // Method to update the list of cart items
-    fun updateCartItems(newItems: List<CartItem>) {
-        cartItemList.clear() // Clear existing items in the cart
-        cartItemList.addAll(newItems) // Add the new items
-        notifyDataSetChanged() // Notify the adapter that the data has changed
+    // Helper function to format the price in Rupiah
+    private fun formatPrice(price: Double): String {
+        val localeID = Locale("id", "ID")
+        val numberFormat = NumberFormat.getCurrencyInstance(localeID)
+        return numberFormat.format(price).replace("Rp", "Rp.").replace(",00", "")
     }
 }
